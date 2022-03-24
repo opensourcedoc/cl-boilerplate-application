@@ -5,7 +5,7 @@
 
 
 ;; Set an executable name.
-#+(or sbcl ccl clisp) (defvar *output* "program")
+#+(or sbcl ccl clisp) (defconstant +program+ "program")
 
 ;; Declare your function here.
 
@@ -22,8 +22,8 @@
 ;;  according to current OS.
 #+(or sbcl ccl clisp) 
     (if (equal :windows (platform))
-        (defvar *program* (concatenate 'string *output* ".exe"))
-        (defvar *program* *output*))
+        (defvar *program* (concatenate 'string +program+ ".exe"))
+        (defvar *program* +program+))
 
 ;; Compile the program.
 ;; It is merely supported to compile GUI programs in SBCL.
