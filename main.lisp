@@ -26,7 +26,10 @@
         (defvar *program* *output*))
 
 ;; Compile the program.
-#+(or sbcl ccl clisp) (compile-program *program* #'main)
+;; It is merely supported to compile GUI programs in SBCL.
+#+(or sbcl ccl clisp) (compile-program *program*
+                                       #'main
+                                       :type :console)
 #+(or sbcl ccl clisp) (quit-with-status)
 
 ;; Run the main function on-the-fly
