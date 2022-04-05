@@ -1,35 +1,43 @@
-(ql:quickload 'cl-portable :silent t)
-(use-package 'cl-portable)
+#+quicklisp (ql:quickload "cl-portable" :silent t)
+#-quicklisp (load "cl-portable.lisp" :print nil)
 
-;; Load and use Lisp packages as needed.
+;; Load other third-party Common Lisp packages here.
 
 
-;; Set an executable name.
+#+(or sbcl ccl clisp) (import 'cl-portable::compile-program)
+#+(or sbcl ccl clisp) (import 'cl-portable::platform)
+(import 'cl-portable::quit-with-status)
+
+;; Import other third-party Common Lisp functions or macros here.
+
+
+;; Set your executable name.
 #+(or sbcl ccl clisp) (defconstant +program+ "program")
 
-;; Declare your function here.
+;; Declare your local functions here.
 
 ;; Simulate a main function.
 (defun main ()
     ;; Implement your main program here.
     (write-line "Hello World")
-    #+ccl (finish-output) ;; Trick for Clozure CL.
+    #+ccl (finish-output)  ; Trick for Clozure CL.
 
-    ;; Return exit status.
+    ;; Return an exit status.
     (quit-with-status 0))
 
-;; Set a proper executable name
-;;  according to current OS.
+;; Set a proper executable name according to current OS.
 #+(or sbcl ccl clisp) 
     (if (equal :windows (platform))
         (defvar *program* (concatenate 'string +program+ ".exe"))
         (defvar *program* +program+))
 
 ;; Compile the program.
-;; It is merely supported to compile GUI programs in SBCL.
-#+(or sbcl ccl clisp) (compile-program *program*
-                                       #'main
-                                       :type :console)
+#+(or sbcl ccl clisp)
+  (if (equal :windows (platform))
+      ;; It is merely supported to compile GUI programs
+      ;;  in SBCL on Windows.
+      (compile-program *program* #'main :type :console)
+      (compile-program *program* #'main))
 #+(or sbcl ccl clisp) (quit-with-status)
 
 ;; Run the main function on-the-fly
